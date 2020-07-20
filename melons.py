@@ -4,6 +4,11 @@ from datetime import datetime, timezone
 from datetime import date
 import time
 
+class TooManyMelonsError(ValueError):
+    def __init__(self):
+        self.message = "No more than 100 melons!"
+
+
 class AbstractMelonOrder():
     """ An abstract base class that other Melon Orders inherit from. """
    
@@ -17,6 +22,10 @@ class AbstractMelonOrder():
         self.base_price = int(5)
         self.tax = float(tax)
         self.order_type = order_type
+
+        if self.qty > 100:
+            raise TooManyMelonsError
+          
 
     def get_total(self):
         """Calculate price, including tax."""
@@ -37,14 +46,12 @@ class AbstractMelonOrder():
         return total + self.get_date_time_surge_fee
     
     def get_date_time_surge_fee(self):
-        today = datetime.today()
         now = today.ctime()
         # print(now, today, today.hour, today.min)
         # print(now.hour - 7, now.min)
         if (str(now).split()[0] in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri' ]
         and "15:00:00"<= str(now).split()[3] < "22:00:00"): 
-           
-            print("SURGE")
+
             return 4
         
         return(0)
@@ -92,3 +99,4 @@ if __name__ == '__main__':
     order1 = DomesticMelonOrder("cantaloupe", 8)
     order2 = DomesticMelonOrder("christmas", 10)
     order3 = DomesticMelonOrder("crenshaw", 10)
+    # order4 = InternationalMelonOrder("Cantaloupe", 105, "MEX")
