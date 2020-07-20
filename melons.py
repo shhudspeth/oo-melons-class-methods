@@ -1,7 +1,8 @@
 """Classes for melon orders."""
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import date
+import time
 
 class AbstractMelonOrder():
     """ An abstract base class that other Melon Orders inherit from. """
@@ -33,14 +34,18 @@ class AbstractMelonOrder():
             fee = 3
         
         total = (1 + self.tax) * self.qty * self.base_price + fee
-        return total
+        return total + self.get_date_time_surge_fee
     
     def get_date_time_surge_fee(self):
-        today = datetime.today(tzinfo ='PST' )
+        today = datetime.today()
         now = today.ctime()
-        print(today.hour)
-        if str(now).split()[0] in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri' ]:
+        # print(now, today, today.hour, today.min)
+        # print(now.hour - 7, now.min)
+        if (str(now).split()[0] in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri' ]
+        and "15:00:00"<= str(now).split()[3] < "22:00:00"): 
+           
             print("SURGE")
+            return 4
         
         return(0)
 
